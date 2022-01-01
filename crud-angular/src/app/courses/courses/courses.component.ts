@@ -12,11 +12,18 @@ export class CoursesComponent implements OnInit {
 
   courses: Course[] = []
   displayedColumns: string[] = ['name', 'category']
+  load: boolean = false;
 
-  constructor(private service:CoursesService) { }
+  constructor(private service: CoursesService) { }
 
   ngOnInit(): void {
-    this.courses = this.service.list();
+    this.load = true;
+    this.service.list().subscribe(
+      (resposta: Course[]) => {
+        this.courses = resposta;
+        this.load = false;
+      }
+    );
   }
 
 }
