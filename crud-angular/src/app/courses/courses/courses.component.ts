@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { catchError, Observable, of } from 'rxjs';
 
 import { Course } from '../model/course';
 import { CoursesService } from '../services/courses.service';
@@ -10,20 +11,25 @@ import { CoursesService } from '../services/courses.service';
 })
 export class CoursesComponent implements OnInit {
 
-  courses: Course[] = []
-  displayedColumns: string[] = ['name', 'category']
-  load: boolean = false;
+  courses$: Observable<Course[]>;
+  displayedColumns = ['name','category'];
 
-  constructor(private service: CoursesService) { }
 
-  ngOnInit(): void {
-    this.load = true;
-    this.service.list().subscribe(
-      (resposta: Course[]) => {
-        this.courses = resposta;
-        this.load = false;
-      }
-    );
-  }
+  constructor(
+    private service: CoursesService
+  ) {
+
+    this.courses$ = this.service.list()
+      .pipe(
+        catchError(error => {
+          return of([])
+        })
+      );
+
+    }
+
+  ngOnInit(): void { }
+
+
 
 }

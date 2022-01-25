@@ -13,7 +13,7 @@ export class CoursesService {
 
   constructor(private httpClient: HttpClient) { }
 
-  list(): Observable<Course[]> {
+  list(): any {
     return this.httpClient.get<Course[]>(`${this.API}`).pipe(first(), delay(5000));
   }
 
