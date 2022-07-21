@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+
+import { CoursesService } from '../services/courses.service';
 
 @Component({
   selector: 'app-course-form',
@@ -13,7 +16,9 @@ export class CourseFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private service: CoursesService,
+    private _snackBar: MatSnackBar
     ) {
 
       this.form = this.formBuilder.group({
@@ -26,11 +31,18 @@ export class CourseFormComponent implements OnInit {
   ngOnInit(): void { }
 
   onSubmit() {
-    console.log("Salvar !!");
+    this.service.save(this.form.value).subscribe(
+      (data: any) => console.log(data),
+      (_: any) => this.onError()
+    );
   }
 
   onCancel() {
     this.router.navigate(['courses'])
+  }
+
+  private onError() {
+    this._snackBar.open("Erro ao salvar curso.", 'Ok',{ duration: 5000});
   }
 
 }
