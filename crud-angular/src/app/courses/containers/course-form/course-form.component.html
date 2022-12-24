@@ -6,7 +6,9 @@
 
     <form [formGroup]="form">
         <mat-form-field  class="full-width">
-          <input matInput placeholder="Nome" formControlName="name">
+          <input matInput placeholder="Nome" formControlName="name" #name>
+          <mat-error *ngIf="form.get('name')?.invalid">{{getErrorMessage('name')}}</mat-error>
+          <mat-hint align="end">{{name.value?.length || 0 }} / 100 </mat-hint>
         </mat-form-field>
 
         <mat-form-field  class="full-width">
@@ -16,6 +18,7 @@
             <mat-option value="front-end">Front-End</mat-option>
             <mat-option value="back-end">Back-End</mat-option>
           </mat-select>
+          <mat-error *ngIf="form.get('category')?.invalid">{{getErrorMessage('category')}}</mat-error>
         </mat-form-field>
       </form>
 
