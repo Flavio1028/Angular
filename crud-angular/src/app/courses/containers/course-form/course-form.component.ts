@@ -59,6 +59,16 @@ export class CourseFormComponent implements OnInit {
     return (<UntypedFormArray>this.form.get('lessons')).controls;
   }
 
+  addNewLessons() {
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+    lessons.push(this.createLesson());
+  }
+
+  removeLessons(index: number) {
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+    lessons.removeAt(index);
+  }
+
   onSubmit() {
     this.service.save(this.form.value).subscribe(
       (_: any) => this.onSuccess(),
