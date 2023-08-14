@@ -34,8 +34,6 @@ export class CourseFormComponent implements OnInit {
       category: [course.category, [Validators.required]],
       lessons: this.formBuilder.array(this.retriveLessons(course), Validators.required)
     });
-    console.log(this.form);
-    console.log(this.form.value);
   }
 
   private retriveLessons(course: Course): FormGroup[] {
@@ -78,7 +76,7 @@ export class CourseFormComponent implements OnInit {
         (_: any) => this.onError()
       );
     } else {
-      alert('Form invalido.');
+      this.formUtils.validateAllFormFields(this.form);
     }
 
   }
