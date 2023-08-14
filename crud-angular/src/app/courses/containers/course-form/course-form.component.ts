@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder, UntypedFormArray, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormUtilsService } from 'src/app/shared/form/form-utils.service';
 
 import { Lesson } from '../../model/lesson';
 import { CoursesService } from '../../services/courses.service';
@@ -21,7 +22,8 @@ export class CourseFormComponent implements OnInit {
     private router: Router,
     private service: CoursesService,
     private _snackBar: MatSnackBar,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public formUtils: FormUtilsService
   ) { }
 
   ngOnInit(): void {
@@ -59,12 +61,12 @@ export class CourseFormComponent implements OnInit {
     return (<UntypedFormArray>this.form.get('lessons')).controls;
   }
 
-  addNewLessons() {
+  addNewLesson() {
     const lessons = this.form.get('lessons') as UntypedFormArray;
     lessons.push(this.createLesson());
   }
 
-  removeLessons(index: number) {
+  removeLesson(index: number) {
     const lessons = this.form.get('lessons') as UntypedFormArray;
     lessons.removeAt(index);
   }
@@ -92,32 +94,6 @@ export class CourseFormComponent implements OnInit {
 
   private onError() {
     this._snackBar.open("Erro ao salvar curso.", 'Ok', { duration: 5000 });
-  }
-
-  getErrorMessage(fieldName: string) {
-    const field: any = this.form.get(fieldName);
-
-    if (field?.hasError('required')) {
-      return 'Campo obrigatório';
-    }
-
-    if (field?.hasError('minlength')) {
-      const requiredLength = field.errors ? field.errors['minlength']['requiredLength'] : 5;
-      return `O tamanho mínimo precisa ser de ${requiredLength} caracteres.`;
-    }
-
-    if (field?.hasError('maxlength')) {
-      const requiredLength = field.errors ? field.errors['maxlength']['requiredLength'] : 100;
-      return `O tamanho máximo precisa ser de ${requiredLength} caracteres.`;
-    }
-
-
-    return 'Campo inválido.';
-  }
-
-  isFormArrayRequired() {
-    const lessons = this.form.get('lessons') as UntypedFormArray;
-    return !lessons.valid && lessons.hasError('required') && lessons.touched;
   }
 
 }
