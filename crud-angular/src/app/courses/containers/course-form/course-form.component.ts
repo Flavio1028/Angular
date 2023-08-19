@@ -47,11 +47,11 @@ export class CourseFormComponent implements OnInit {
     return lessons;
   }
 
-  private createLesson(lesson: Lesson = { id: '', name: '', youtubeURL: '' }): FormGroup {
+  private createLesson(lesson: Lesson = { id: '', name: '', youtubeUrl: '' }): FormGroup {
     return this.formBuilder.group({
       id: [lesson.id],
       name: [lesson.name, [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
-      youtubeUrl: [lesson.youtubeURL, [Validators.required, Validators.minLength(10), Validators.maxLength(11)]]
+      youtubeUrl: [lesson.youtubeUrl, [Validators.required, Validators.minLength(10), Validators.maxLength(11)]]
     });
   }
 
