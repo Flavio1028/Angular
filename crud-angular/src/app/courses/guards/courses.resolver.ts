@@ -1,6 +1,6 @@
 import { Lesson } from './../model/lesson';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
 import { CoursesService } from '../services/courses.service';
@@ -9,7 +9,7 @@ import { Course } from './../model/course';
 @Injectable({
   providedIn: 'root'
 })
-export class CoursesResolver implements Resolve<Course> {
+export class CoursesResolver  {
 
   constructor(private service: CoursesService){}
 
