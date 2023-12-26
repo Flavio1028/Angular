@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 import { ErrorDialogComponent } from '../../../shared/components/error-dialog/error-dialog.component';
 import { Course } from '../../model/course';
+import { CoursePage } from '../../model/course-page';
 import { CoursesService } from '../../services/courses.service';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-courses',
@@ -16,7 +18,12 @@ import { CoursesService } from '../../services/courses.service';
 })
 export class CoursesComponent implements OnInit {
 
-  courses$: Observable<Course[]> | undefined;
+  courses$: Observable<CoursePage> | undefined;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  pageIndex = 0;
+  pageSize = 10;
 
   constructor(
     private service: CoursesService,
@@ -28,14 +35,18 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.refresh();
-   }
+  }
 
-  refresh(): void {
-    this.courses$ = this.service.list()
+  refresh(pageEvent: PageEvent = { length: 0, pageIndex: 0, pageSize: 10 }): void {
+    this.courses$ = this.service.list(pageEvent.pageIndex, pageEvent.pageSize)
       .pipe(
+        tap((): void => {
+          this.pageIndex = pageEvent.pageIndex;
+          this.pageSize = pageEvent.pageSize;
+        }),
         catchError(() => {
           this.onError("Erro ao carregar cursos.");
-          return of([])
+          return of({ courses: [], totalElements: 0, totalPage: 0 })
         })
       );
   }
@@ -47,11 +58,11 @@ export class CoursesComponent implements OnInit {
   }
 
   onAdd() {
-    this.router.navigate(['new'], { relativeTo: this.route});
+    this.router.navigate(['new'], { relativeTo: this.route });
   }
 
   onEdit(course: Course) {
-    this.router.navigate(['edit', course._id], { relativeTo: this.route})
+    this.router.navigate(['edit', course._id], { relativeTo: this.route })
   }
 
   onRemove(course: Course) {
@@ -61,7 +72,7 @@ export class CoursesComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: boolean) => {
-      if(result) {
+      if (result) {
         this.service.remove(course._id).subscribe({
           next: () => {
             this._snackBar.open("Curso removido com sucesso!", 'X', {
